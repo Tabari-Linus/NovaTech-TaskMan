@@ -122,3 +122,52 @@ body {
         transform: translateY(-3px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
+
+
+    .filter-card {
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-end;
+    }
+
+    .filter-form .form-group {
+        margin-bottom: 0;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .date-filter-badge {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        background-color: #e6f7ff;
+        border-radius: 4px;
+        border-left: 4px solid #1890ff;
+    }
+
+    .clear-filter {
+        margin-left: auto;
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .clear-filter:hover {
+        color: #dc3545;
+        text-decoration: underline;
+    }

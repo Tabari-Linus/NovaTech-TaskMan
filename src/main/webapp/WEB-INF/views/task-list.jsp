@@ -6,7 +6,6 @@
 
 <h2>My Tasks</h2>
 
-
 <div class="card mb-4">
     <div class="card-header">
         <h5>Filter Tasks</h5>
@@ -14,7 +13,7 @@
     <div class="card-body">
         <form action="${pageContext.request.contextPath}/tasks" method="get" class="row g-3">
             <!-- Status Filter -->
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-control" id="status" name="status">
                     <option value="">All Statuses</option>
@@ -24,7 +23,7 @@
                 </select>
             </div>
 
-            <!-- Date Range Filter -->
+
             <div class="col-md-3">
                 <label for="startDate" class="form-label">From Date</label>
                 <input type="date" class="form-control" id="startDate" name="startDate" value="${startDate}">
@@ -34,7 +33,16 @@
                 <input type="date" class="form-control" id="endDate" name="endDate" value="${endDate}">
             </div>
 
-            <div class="col-md-3 d-flex align-items-end">
+
+            <div class="col-md-2">
+                <label for="sortOrder" class="form-label">Sort Order</label>
+                <select class="form-control" id="sortOrder" name="sortOrder">
+                    <option value="asc" ${sortOrder ne 'desc' ? 'selected' : ''}>Oldest First</option>
+                    <option value="desc" ${sortOrder eq 'desc' ? 'selected' : ''}>Newest First</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
                 <a href="${pageContext.request.contextPath}/tasks" class="btn btn-outline-secondary">Clear</a>
             </div>
@@ -62,13 +70,20 @@
     </div>
 </div>
 
-<c:if test="${not empty startDate or not empty endDate}">
+<c:if test="${not empty startDate or not empty endDate or sortOrder eq 'desc'}">
     <div class="alert alert-info mb-3">
-        <strong>Date Filter:</strong>
-        <c:if test="${not empty startDate}">From ${startDate}</c:if>
-        <c:if test="${not empty startDate and not empty endDate}"> - </c:if>
-        <c:if test="${not empty endDate}">To ${endDate}</c:if>
-        <a href="${pageContext.request.contextPath}/tasks${not empty statusFilter ? '?status='.concat(statusFilter) : ''}" class="float-right">Clear Date Filter</a>
+        <c:if test="${not empty startDate or not empty endDate}">
+            <strong>Date Filter:</strong>
+            <c:if test="${not empty startDate}">From ${startDate}</c:if>
+            <c:if test="${not empty startDate and not empty endDate}"> - </c:if>
+            <c:if test="${not empty endDate}">To ${endDate}</c:if>
+        </c:if>
+
+        <c:if test="${sortOrder eq 'desc'}">
+            <strong><c:if test="${not empty startDate or not empty endDate}"> | </c:if>Sort Order:</strong> Newest First
+        </c:if>
+
+        <a href="${pageContext.request.contextPath}/tasks${not empty statusFilter ? '?status='.concat(statusFilter) : ''}" class="float-right">Clear Filters</a>
     </div>
 </c:if>
 
@@ -84,7 +99,15 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>Title</th>
-                        <th>Due Date</th>
+                        <th>
+                            Due Date
+                            <c:if test="${sortOrder eq 'desc'}">
+                                <i class="fas fa-sort-down ml-1"></i>
+                            </c:if>
+                            <c:if test="${sortOrder ne 'desc' and not empty sortOrder}">
+                                <i class="fas fa-sort-up ml-1"></i>
+                            </c:if>
+                        </th>
                         <th>Status</th>
                         <th>Priority</th>
                         <th>Actions</th>
@@ -144,5 +167,8 @@
         </div>
     </c:otherwise>
 </c:choose>
+
+<!-- Add this to your header.jsp if you haven't already -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> -->
 
 <jsp:include page="/WEB-INF/views/footer.jsp"/>
