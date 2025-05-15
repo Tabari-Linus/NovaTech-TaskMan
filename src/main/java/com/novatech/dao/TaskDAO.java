@@ -2,7 +2,7 @@ package com.novatech.dao;
 
 import com.novatech.model.Task;
 import java.sql.SQLException;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public interface TaskDAO {
