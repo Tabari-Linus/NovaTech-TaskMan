@@ -27,6 +27,9 @@ public class AuthServlet extends HttpServlet {
             throws ServletException, IOException {
         String path = request.getServletPath();
 
+        /*
+         * Code to check session and log user out appropriately
+         */
         if ("/logout".equals(path)) {
             HttpSession session = request.getSession(false);
             if (session != null) {
