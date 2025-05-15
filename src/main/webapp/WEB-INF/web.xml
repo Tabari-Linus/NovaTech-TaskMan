@@ -29,6 +29,19 @@
     <url-pattern>/register</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ApiAuthServlet</servlet-name>
+    <servlet-class>com.novatech.controller.ApiAuthServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ApiAuthServlet</servlet-name>
+    <url-pattern>/api/auth/login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ApiAuthServlet</servlet-name>
+    <url-pattern>/api/auth/logout</url-pattern>
+  </servlet-mapping>
+
   <error-page>
     <error-code>404</error-code>
     <location>/WEB-INF/views/error-404.jsp</location>
