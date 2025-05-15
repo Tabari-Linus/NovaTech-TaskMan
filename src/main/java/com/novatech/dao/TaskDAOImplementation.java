@@ -114,6 +114,59 @@ public class TaskDAOImplementation implements TaskDAO {
     }
 
     @Override
+    public List<Task> findByDateRange(int userId, Date startDate, Date endDate, String status) throws SQLException {
+        String sql = "SELECT * FROM tasks WHERE user_id = ?";
+
+        if (startDate != null) {
+            sql += " AND due_date >= ?";
+        }
+        if (endDate != null) {
+            sql += " AND due_date <= ?";
+        }
+
+        if (status != null && !status.isEmpty()) {
+            sql += " AND status = ?";
+        }
+
+        sql += " ORDER BY due_date ASC";
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Task> tasks = new ArrayList<>();
+
+        try {
+            conn = DBUtil.getConnection();
+            stmt = conn.prepareStatement(sql);
+
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, userId);
+
+            if (startDate != null) {
+                stmt.setDate(paramIndex++, startDate);
+            }
+            if (endDate != null) {
+                stmt.setDate(paramIndex++, endDate);
+            }
+            if (status != null && !status.isEmpty()) {
+                stmt.setString(paramIndex, status);
+            }
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                tasks.add(extractTaskFromResultSet(rs));
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            DBUtil.closeConnection(conn);
+        }
+
+        return tasks;
+    }
+
+    @Override
     public int create(Task task) throws SQLException {
         String sql = "INSERT INTO tasks (title, description, due_date, status, priority, user_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?) RETURNING id";
