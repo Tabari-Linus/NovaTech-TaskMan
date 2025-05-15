@@ -39,8 +39,12 @@ public class DBUtil {
         String username = properties.getProperty("jdbc.username");
         String password = properties.getProperty("jdbc.password");
 
-        if (url == null || username == null || password == null) {
-            throw new SQLException("Database connection properties not found");
+        if (url == null ) {
+            throw new SQLException("Database connection url not found");
+        } else if (username == null) {
+            throw new SQLException("Database connection username not found");
+        } else if (password == null) {
+            throw new SQLException("Database connection password not found");
         }
 
         return DriverManager.getConnection(url, username, password);
