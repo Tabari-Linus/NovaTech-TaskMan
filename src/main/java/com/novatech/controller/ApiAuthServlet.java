@@ -5,13 +5,16 @@ import com.novatech.model.User;
 import com.novatech.service.UserService;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -33,7 +36,7 @@ public class ApiAuthServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Add CORS headers
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -62,7 +65,7 @@ public class ApiAuthServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Add CORS headers
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -79,7 +82,7 @@ public class ApiAuthServlet extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Handle preflight CORS requests
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -89,20 +92,15 @@ public class ApiAuthServlet extends HttpServlet {
     private void handleApiLogin(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        // Log request details for debugging
-        System.out.println("=== API Auth Login Request ===");
-        System.out.println("Content-Type: " + request.getContentType());
-        System.out.println("Content-Length: " + request.getContentLength());
-
         try {
             String username = null;
             String password = null;
 
-            // Check content type
+
             String contentType = request.getContentType();
 
             if (contentType != null && contentType.contains("application/json")) {
-                // JSON parsing
+
                 StringBuilder sb = new StringBuilder();
                 BufferedReader reader = request.getReader();
                 String line;
@@ -113,50 +111,64 @@ public class ApiAuthServlet extends HttpServlet {
                 String requestBody = sb.toString();
                 System.out.println("Request Body: " + (requestBody.isEmpty() ? "[EMPTY]" : requestBody));
 
-                // Handle empty request body
-                if (requestBody.isEmpty()) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    Map<String, Object> result = new HashMap<>();
-                    result.put("success", false);
-                    result.put("message", "Empty request body. Please provide username and password.");
 
-                    response.setContentType("application/json");
-                    PrintWriter out = response.getWriter();
-                    out.print(objectMapper.writeValueAsString(result));
+                if (requestBody.isEmpty()) {
+                    sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST,
+                            "Empty request body. Please provide username and password.");
                     return;
                 }
 
                 Map<String, String> credentials = objectMapper.readValue(requestBody, Map.class);
                 username = credentials.get("username");
                 password = credentials.get("password");
+            } else if (contentType != null && contentType.contains("multipart/form-data")) {
+
+                try {
+                    Part usernamePart = request.getPart("username");
+                    Part passwordPart = request.getPart("password");
+
+                    if (usernamePart != null) {
+                        username = readPartAsString(usernamePart);
+                    }
+
+                    if (passwordPart != null) {
+                        password = readPartAsString(passwordPart);
+                    }
+
+                    System.out.println("Multipart form data - Username: " +
+                            (username != null ? username : "[NULL]") +
+                            ", Password: " + (password != null ? "[REDACTED]" : "[NULL]"));
+                } catch (ServletException e) {
+                    System.out.println("Error parsing multipart request: " + e.getMessage());
+                    e.printStackTrace();
+                    sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST,
+                            "Error processing multipart form data: " + e.getMessage());
+                    return;
+                }
             } else {
-                // Form data
+
                 username = request.getParameter("username");
                 password = request.getParameter("password");
-                System.out.println("Form parameters - Username: " + username + ", Password: [REDACTED]");
+                System.out.println("Form parameters - Username: " +
+                        (username != null ? username : "[NULL]") +
+                        ", Password: " + (password != null ? "[REDACTED]" : "[NULL]"));
             }
 
-            // Validate credentials
-            if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                Map<String, Object> result = new HashMap<>();
-                result.put("success", false);
-                result.put("message", "Missing username or password");
 
-                response.setContentType("application/json");
-                PrintWriter out = response.getWriter();
-                out.print(objectMapper.writeValueAsString(result));
+            if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+                sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Missing username or password");
                 return;
             }
 
-            // Authenticate user
+
             User user = userService.authenticate(username, password);
 
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
 
             if (user != null) {
-                // Login successful
+
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
                 session.setAttribute("userId", user.getId());
@@ -173,7 +185,7 @@ public class ApiAuthServlet extends HttpServlet {
                 out.print(objectMapper.writeValueAsString(result));
                 System.out.println("Login successful for user: " + username);
             } else {
-                // Login failed
+
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 Map<String, Object> result = new HashMap<>();
                 result.put("success", false);
@@ -184,27 +196,37 @@ public class ApiAuthServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "Database error: " + e.getMessage());
-
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print(objectMapper.writeValueAsString(result));
+            sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Database error: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            Map<String, Object> result = new HashMap<>();
-            result.put("success", false);
-            result.put("message", "Error: " + e.getMessage());
-
-            response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
-            out.print(objectMapper.writeValueAsString(result));
+            sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST,
+                    "Error: " + e.getMessage());
         }
+    }
+
+
+    private String readPartAsString(Part part) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(part.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        return sb.toString();
+    }
+
+
+    private void sendErrorResponse(HttpServletResponse response, int statusCode, String message)
+            throws IOException {
+        response.setStatus(statusCode);
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", false);
+        result.put("message", message);
+
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.print(objectMapper.writeValueAsString(result));
     }
 
     private void handleApiLogout(HttpServletRequest request, HttpServletResponse response)
