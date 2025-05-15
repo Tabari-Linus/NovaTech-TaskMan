@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class TaskService {
-    private TaskDAO taskDAO;
+    private final TaskDAO taskDAO;
 
     public TaskService() {
         this.taskDAO = new TaskDAOImplementation();
