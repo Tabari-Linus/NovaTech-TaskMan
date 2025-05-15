@@ -48,7 +48,6 @@
     </div>
 </div>
 
-
 <div class="row mb-3">
     <div class="col-md-6">
         <div class="btn-group" role="group">
@@ -62,6 +61,16 @@
         <a href="${pageContext.request.contextPath}/tasks/new" class="btn btn-success">Add New Task</a>
     </div>
 </div>
+
+<c:if test="${not empty startDate or not empty endDate}">
+    <div class="alert alert-info mb-3">
+        <strong>Date Filter:</strong>
+        <c:if test="${not empty startDate}">From ${startDate}</c:if>
+        <c:if test="${not empty startDate and not empty endDate}"> - </c:if>
+        <c:if test="${not empty endDate}">To ${endDate}</c:if>
+        <a href="${pageContext.request.contextPath}/tasks${not empty statusFilter ? '?status='.concat(statusFilter) : ''}" class="float-right">Clear Date Filter</a>
+    </div>
+</c:if>
 
 <c:choose>
     <c:when test="${empty tasks}">
