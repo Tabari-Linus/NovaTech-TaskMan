@@ -71,7 +71,7 @@ public class DashboardServlet extends HttpServlet {
             List<Task> upcomingTasks = allTasks.stream()
                     .filter(task -> !task.getStatus().equals("COMPLETED"))
                     .sorted((t1, t2) -> {
-                        // Handle null dates in sorting
+
                         if (t1.getDueDate() == null && t2.getDueDate() == null) return 0;
                         if (t1.getDueDate() == null) return 1; // Null dates go at the end
                         if (t2.getDueDate() == null) return -1;
