@@ -42,22 +42,51 @@ public class TaskServlet extends HttpServlet {
 
         try {
             if (pathInfo == null || pathInfo.equals("/")) {
-
                 String statusFilter = request.getParameter("status");
                 String startDateStr = request.getParameter("startDate");
                 String endDateStr = request.getParameter("endDate");
                 String sortOrderStr = request.getParameter("sortOrder");
 
+
+                boolean sortDescending = "desc".equalsIgnoreCase(sortOrderStr);
+
+                Date startDate = null;
+                Date endDate = null;
+
+                if (startDateStr != null && !startDateStr.isEmpty()) {
+                    try {
+                        startDate = Date.valueOf(startDateStr);
+                    } catch (IllegalArgumentException e) {
+                        request.setAttribute("dateError", "Invalid start date format. Use YYYY-MM-DD.");
+                    }
+                }
+
+                if (endDateStr != null && !endDateStr.isEmpty()) {
+                    try {
+                        endDate = Date.valueOf(endDateStr);
+                    } catch (IllegalArgumentException e) {
+                        request.setAttribute("dateError", "Invalid end date format. Use YYYY-MM-DD.");
+                    }
+                }
+
                 List<Task> tasks;
 
-                if (statusFilter != null && !statusFilter.isEmpty()) {
+                if (startDate != null || endDate != null) {
+                    tasks = taskService.findByDateRange(userId, startDate, endDate, statusFilter, sortDescending);
+                    request.setAttribute("startDate", startDateStr);
+                    request.setAttribute("endDate", endDateStr);
+                    request.setAttribute("sortOrder", sortOrderStr);
+                } else if (statusFilter != null && !statusFilter.isEmpty()) {
+
                     tasks = taskService.findByStatus(userId, statusFilter);
-                    request.setAttribute("statusFilter", statusFilter);
                 } else {
                     tasks = taskService.findByUserId(userId);
                 }
 
                 request.setAttribute("tasks", tasks);
+                if (statusFilter != null && !statusFilter.isEmpty()) {
+                    request.setAttribute("statusFilter", statusFilter);
+                }
                 request.getRequestDispatcher("/WEB-INF/views/task-list.jsp").forward(request, response);
             } else if (pathInfo.equals("/new")) {
 
