@@ -83,15 +83,15 @@
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge badge-danger mr-2">High</span> Priority</span>
+                            <span><span class="badge badge-danger mr-2 px-3 py-1">High</span> Priority</span>
                             <span class="badge badge-pill badge-secondary">${priorityCounts['HIGH']}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge badge-warning mr-2">Medium</span> Priority</span>
+                            <span><span class="badge badge-warning mr-2 px-3 py-1">Medium</span> Priority</span>
                             <span class="badge badge-pill badge-secondary">${priorityCounts['MEDIUM']}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span><span class="badge badge-success mr-2">Low</span> Priority</span>
+                            <span><span class="badge badge-success mr-2 px-3 py-1">Low</span> Priority</span>
                             <span class="badge badge-pill badge-secondary">${priorityCounts['LOW']}</span>
                         </li>
                     </ul>
@@ -146,32 +146,32 @@
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${task.status eq 'PENDING'}">
-                                                            <span class="badge badge-warning">Pending</span>
+                                                            <span class="badge badge-warning px-3 py-1">Pending</span>
                                                         </c:when>
                                                         <c:when test="${task.status eq 'IN_PROGRESS'}">
-                                                            <span class="badge badge-info">In Progress</span>
+                                                            <span class="badge badge-info px-3 py-1">In Progress</span>
                                                         </c:when>
                                                         <c:when test="${task.status eq 'COMPLETED'}">
-                                                            <span class="badge badge-success">Completed</span>
+                                                            <span class="badge badge-success px-3 py-1">Completed</span>
                                                         </c:when>
                                                     </c:choose>
                                                 </td>
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${task.priority eq 'HIGH'}">
-                                                            <span class="badge badge-danger">High</span>
+                                                            <span class="badge badge-danger px-3 py-1">High</span>
                                                         </c:when>
                                                         <c:when test="${task.priority eq 'MEDIUM'}">
-                                                            <span class="badge badge-warning">Medium</span>
+                                                            <span class="badge badge-warning px-3 py-1">Medium</span>
                                                         </c:when>
                                                         <c:when test="${task.priority eq 'LOW'}">
-                                                            <span class="badge badge-success">Low</span>
+                                                            <span class="badge badge-success px-3 py-1">Low</span>
                                                         </c:when>
                                                     </c:choose>
                                                 </td>
                                                 <td>
                                                     <div class="btn-group" role="group">
-                                                        <a href="${pageContext.request.contextPath}/tasks/edit/${task.id}" class="btn btn-sm btn-primary">Edit</a>
+                                                        <a href="${pageContext.request.contextPath}/tasks/edit/${task.id}" class="btn btn-sm btn-primary px-3 py-1">Edit</a>
                                                     </div>
                                                 </td>
                                             </tr>
