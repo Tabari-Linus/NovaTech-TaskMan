@@ -135,9 +135,7 @@ public class ApiAuthServlet extends HttpServlet {
                         password = readPartAsString(passwordPart);
                     }
 
-                    System.out.println("Multipart form data - Username: " +
-                            (username != null ? username : "[NULL]") +
-                            ", Password: " + (password != null ? "[REDACTED]" : "[NULL]"));
+
                 } catch (ServletException e) {
                     System.out.println("Error parsing multipart request: " + e.getMessage());
                     e.printStackTrace();
@@ -183,7 +181,7 @@ public class ApiAuthServlet extends HttpServlet {
                 ));
 
                 out.print(objectMapper.writeValueAsString(result));
-                System.out.println("Login successful for user: " + username);
+
             } else {
 
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
