@@ -44,6 +44,10 @@ public class TaskServlet extends HttpServlet {
             if (pathInfo == null || pathInfo.equals("/")) {
 
                 String statusFilter = request.getParameter("status");
+                String startDateStr = request.getParameter("startDate");
+                String endDateStr = request.getParameter("endDate");
+                String sortOrderStr = request.getParameter("sortOrder");
+
                 List<Task> tasks;
 
                 if (statusFilter != null && !statusFilter.isEmpty()) {
