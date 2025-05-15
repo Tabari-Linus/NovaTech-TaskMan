@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@WebServlet("/dashboard")
+@WebServlet(name="dashboard", urlPatterns = {"/dashboard"})
 public class DashboardServlet extends HttpServlet {
     private TaskService taskService;
 
