@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
     public UserService() {
         this.userDAO = new UserDAOImplementation();
