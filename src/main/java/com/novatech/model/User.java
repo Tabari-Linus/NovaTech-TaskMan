@@ -2,6 +2,9 @@ package com.novatech.model;
 
 import java.sql.Timestamp;
 
+/**
+ * User class to use to handle user instance
+ */
 public class User {
     private int id;
     private String username;
