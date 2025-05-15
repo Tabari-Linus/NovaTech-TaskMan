@@ -4,6 +4,7 @@ import com.novatech.dao.TaskDAO;
 import com.novatech.dao.TaskDAOImplementation;
 import com.novatech.model.Task;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class TaskService {
 
     public List<Task> findByStatus(int userId, String status) throws SQLException {
         return taskDAO.findByStatus(userId, status);
+    }
+
+    public List<Task> findByDateRange(int userId, Date startDate, Date endDate, String status, boolean sortDescending) throws SQLException {
+        return taskDAO.findByDateRange(userId, startDate, endDate, status, sortDescending);
     }
 
     public int create(Task task) throws SQLException {
