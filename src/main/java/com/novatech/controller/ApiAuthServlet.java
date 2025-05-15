@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(name = "ApiAuthServlet", urlPatterns = {"/api/auth/login", "/api/auth/logout"})
+@MultipartConfig
 public class ApiAuthServlet extends HttpServlet {
     private UserService userService;
     private ObjectMapper objectMapper;
