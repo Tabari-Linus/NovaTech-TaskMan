@@ -6,6 +6,49 @@
 
 <h2>My Tasks</h2>
 
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Filter Tasks</h5>
+    </div>
+    <div class="card-body">
+        <form action="${pageContext.request.contextPath}/tasks" method="get" class="row g-3">
+            <!-- Status Filter -->
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option value="PENDING" ${statusFilter eq 'PENDING' ? 'selected' : ''}>Pending</option>
+                    <option value="IN_PROGRESS" ${statusFilter eq 'IN_PROGRESS' ? 'selected' : ''}>In Progress</option>
+                    <option value="COMPLETED" ${statusFilter eq 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                </select>
+            </div>
+
+            <!-- Date Range Filter -->
+            <div class="col-md-3">
+                <label for="startDate" class="form-label">From Date</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" value="${startDate}">
+            </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label">To Date</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" value="${endDate}">
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                <a href="${pageContext.request.contextPath}/tasks" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+
+        <c:if test="${not empty dateError}">
+            <div class="alert alert-danger mt-3" role="alert">
+                ${dateError}
+            </div>
+        </c:if>
+    </div>
+</div>
+
+
 <div class="row mb-3">
     <div class="col-md-6">
         <div class="btn-group" role="group">
@@ -23,7 +66,7 @@
 <c:choose>
     <c:when test="${empty tasks}">
         <div class="alert alert-info">
-            No tasks found. Click the "Add New Task" button to create one.
+            No tasks found matching your criteria. Click the "Add New Task" button to create one.
         </div>
     </c:when>
     <c:otherwise>
@@ -42,7 +85,16 @@
                     <c:forEach var="task" items="${tasks}">
                         <tr>
                             <td>${task.title}</td>
-                            <td><fmt:formatDate value="${task.dueDate}" pattern="MM/dd/yyyy" /></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${task.dueDate != null}">
+                                        <fmt:formatDate value="${task.dueDate}" pattern="MMM dd, yyyy" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-muted">No due date</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td>
                                 <c:choose>
                                     <c:when test="${task.status eq 'PENDING'}">
