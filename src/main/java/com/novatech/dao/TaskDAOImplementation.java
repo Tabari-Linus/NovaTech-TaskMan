@@ -114,7 +114,7 @@ public class TaskDAOImplementation implements TaskDAO {
     }
 
     @Override
-    public List<Task> findByDateRange(int userId, Date startDate, Date endDate, String status) throws SQLException {
+    public List<Task> findByDateRange(int userId, Date startDate, Date endDate, String status, boolean sortDescending) throws SQLException {
         String sql = "SELECT * FROM tasks WHERE user_id = ?";
 
         if (startDate != null) {
@@ -128,7 +128,7 @@ public class TaskDAOImplementation implements TaskDAO {
             sql += " AND status = ?";
         }
 
-        sql += " ORDER BY due_date ASC";
+        sql += " ORDER BY due_date " + (sortDescending ? "DESC" : "ASC");
 
         Connection conn = null;
         PreparedStatement stmt = null;
