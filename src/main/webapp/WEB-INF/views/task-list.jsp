@@ -43,7 +43,7 @@
             </div>
 
             <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                <button type="submit" class="btn btn-primary me-2">Apply </button>
                 <a href="${pageContext.request.contextPath}/tasks" class="btn btn-outline-secondary">Clear</a>
             </div>
         </form>
@@ -130,32 +130,32 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${task.status eq 'PENDING'}">
-                                        <span class="badge badge-warning">Pending</span>
+                                        <span class="badge badge-warning px-3 py-1">Pending</span>
                                     </c:when>
                                     <c:when test="${task.status eq 'IN_PROGRESS'}">
-                                        <span class="badge badge-info">In Progress</span>
+                                        <span class="badge badge-info px-3 py-1">In Progress</span>
                                     </c:when>
                                     <c:when test="${task.status eq 'COMPLETED'}">
-                                        <span class="badge badge-success">Completed</span>
+                                        <span class="badge badge-success px-3 py-1">Completed</span>
                                     </c:when>
                                 </c:choose>
                             </td>
                             <td>
                                 <c:choose>
                                     <c:when test="${task.priority eq 'HIGH'}">
-                                        <span class="badge badge-danger">High</span>
+                                        <span class="badge badge-danger  px-3 py-1">High</span>
                                     </c:when>
                                     <c:when test="${task.priority eq 'MEDIUM'}">
-                                        <span class="badge badge-warning">Medium</span>
+                                        <span class="badge badge-warning px-3 py-1">Medium</span>
                                     </c:when>
                                     <c:when test="${task.priority eq 'LOW'}">
-                                        <span class="badge badge-secondary">Low</span>
+                                        <span class="badge badge-secondary px-3 py-1">Low</span>
                                     </c:when>
                                 </c:choose>
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <a href="${pageContext.request.contextPath}/tasks/edit/${task.id}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="${pageContext.request.contextPath}/tasks/edit/${task.id}" class="btn btn-sm btn-primary ">Edit</a>
                                     <a href="${pageContext.request.contextPath}/tasks/delete/${task.id}" class="btn btn-sm btn-danger"
                                        onclick="return confirm('Are you sure you want to delete this task?')">Delete</a>
                                 </div>
@@ -167,8 +167,5 @@
         </div>
     </c:otherwise>
 </c:choose>
-
-<!-- Add this to your header.jsp if you haven't already -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> -->
 
 <jsp:include page="/WEB-INF/views/footer.jsp"/>
